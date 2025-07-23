@@ -397,6 +397,7 @@ fn parse_otlp_logs(
     request: ExportLogsServiceRequest,
 ) -> Result<BTreeSet<OrdLogRecord>, OtlpLogsError> {
     let mut log_records = BTreeSet::new();
+    let mut i = 0;
     for resource_log in request.resource_logs {
         let mut resource_attributes = extract_attributes(
             resource_log
@@ -411,7 +412,7 @@ fn parse_otlp_logs(
             .unwrap_or(0);
 
         let service_name = match resource_attributes.remove("service.name") {
-            Some(JsonValue::String(value)) => value.to_string(),
+            Some(JsonValue::String(value)) => format!("{}-{}", value.to_string(), i),
             _ => "unknown_service".to_string(),
         };
         for scope_log in resource_log.scope_logs {
@@ -503,7 +504,9 @@ fn parse_otlp_logs(
                     scope_attributes: scope_attributes.clone(),
                     scope_dropped_attributes_count,
                 };
-                log_records.insert(OrdLogRecord(log_record));
+
+                assert!(log_records.insert(OrdLogRecord(log_record)));
+                i += 1;
             }
         }
     }

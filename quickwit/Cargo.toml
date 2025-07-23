@@ -372,7 +372,7 @@ sasl2-sys = { git = "https://github.com/quickwit-oss/rust-sasl/", rev = "085a4c7
 #tracing-subscriber = { git = "https://github.com/trinity-1686a/tracing.git", rev = "6806cac3" }
 
 [profile.dev]
-debug = false
+debug = true
 
 [profile.release]
 lto = "thin"
